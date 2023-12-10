@@ -1,4 +1,5 @@
 using rct.Enums;
+using rct.Exceptions;
 using rct.Structs;
 
 namespace rct;
@@ -24,6 +25,24 @@ public class Rct
       if (m.ObjectId == objectId)
       {
         return m;
+      }
+    } while (!cancel.IsCancellationRequested);
+
+    throw new OperationCanceledException();
+  }
+
+  public async Task Sniff(Action<Message> messages, CancellationToken cancel = default)
+  {
+    do
+    {
+      try
+      {
+        var m = await _reader.GetNextMessage();
+        messages.Invoke(m);
+      }
+      catch (CrcException e)
+      {
+        // Ignore this for a moment..
       }
     } while (!cancel.IsCancellationRequested);
 

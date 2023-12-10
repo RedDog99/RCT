@@ -47,6 +47,27 @@ public struct Message
     return BitConverter.ToString(Payload, 0);
   }
 
+  public Dictionary<uint, CellData> PayloadAsCellDataDict()
+  {
+    if (Payload.Length != 96)
+    {
+      throw new InvalidCastException("Invalid payload");
+    }
+
+    var result = new Dictionary<uint, CellData>();
+    for (uint i = 0; i < Payload.Length; i += 4)
+    {
+      result.Add(i / 4, new CellData
+      {
+        Temp = Payload[i + 3],
+        Voltage = (ushort)((Payload[i + 1] << 8) + Payload[i + 2]),
+        Resistance = Payload[i],
+      });
+    }
+
+    return result;
+  }
+
   // DataType.ENUM:
   // DataType.EVENT_TABLE:
   // DataType.TIMESERIES:

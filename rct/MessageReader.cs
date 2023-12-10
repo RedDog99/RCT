@@ -1,4 +1,5 @@
 using rct.Enums;
+using rct.Exceptions;
 using rct.Extensions;
 using rct.Structs;
 
@@ -71,7 +72,7 @@ public class MessageReader
 
     if (crc != crcCalc.GetCrc())
     {
-      throw new Exception("CRC Error");
+      throw new CrcException("CRC Error");
     }
 
     return new Message
